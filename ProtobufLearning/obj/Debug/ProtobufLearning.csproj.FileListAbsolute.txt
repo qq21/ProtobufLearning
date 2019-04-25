@@ -1,0 +1,8 @@
+F:\C#Learning\ProtobufLearning\ProtobufLearning\obj\Debug\ProtobufLearning.csprojAssemblyReference.cache
+F:\C#Learning\ProtobufLearning\ProtobufLearning\obj\Debug\ProtobufLearning.csproj.CoreCompileInputs.cache
+F:\C#Learning\ProtobufLearning\ProtobufLearning\bin\Debug\ProtobufLearning.exe
+F:\C#Learning\ProtobufLearning\ProtobufLearning\bin\Debug\ProtobufLearning.pdb
+F:\C#Learning\ProtobufLearning\ProtobufLearning\bin\Debug\protobuf-net.dll
+F:\C#Learning\ProtobufLearning\ProtobufLearning\obj\Debug\ProtobufLearning.csproj.CopyComplete
+F:\C#Learning\ProtobufLearning\ProtobufLearning\obj\Debug\ProtobufLearning.exe
+F:\C#Learning\ProtobufLearning\ProtobufLearning\obj\Debug\ProtobufLearning.pdb
