@@ -14,7 +14,9 @@ namespace ProtobufLearning
         static void Main(string[] args)
         {
 
-            NetMode m1 = new NetMode(1, "a");
+            // NetMode m1 = new NetMode(1, "a");
+
+            NetModeSub m1 = new NetModeSub(1,"2",3);
             Console.WriteLine("发送数据，进行序列化");
             Console.WriteLine("序列化后:id：{0} name:{1}", m1.id, m1.name);
 
@@ -27,6 +29,10 @@ namespace ProtobufLearning
         }
     }
 
+    /// <summary>
+    /// 坑1  一个类 上的特性上的  编号 都不能重复  0  不是int  0 会报错
+    /// </summary>
+    [ProtoInclude(3,typeof(NetModeSub))]
     [ProtoContract]
     class NetMode
     {
@@ -36,9 +42,7 @@ namespace ProtobufLearning
         [ProtoMember(2)]
         public string name;
 
-        /// <summary>
-        /// 使用构造函数时 ，一定要加上默认的构造函数，不然会报错
-        /// </summary>
+         
         public NetMode()
         {
         }
@@ -47,6 +51,33 @@ namespace ProtobufLearning
         {
             this.id = id;
             this.name = name;
+        }
+    }
+
+     [ProtoContract]
+    class NetModeSub:NetMode
+    {
+  
+      
+
+        [ProtoMember(2)] public float range;
+        /// <summary>
+        ///   子类的构造函数也一定要有，不然也会报错
+        /// </summary>
+        public NetModeSub()
+        {
+            range = 12;
+        }
+
+        
+        public NetModeSub(float range)
+        {
+            this.range = range;
+        }
+
+        public NetModeSub(int id, string name, float range) : base(id, name)
+        {
+            this.range = range;
         }
     }
 
@@ -67,7 +98,7 @@ namespace ProtobufLearning
                 {
                     // 序列化 到内存里 
                     Serializer.Serialize(ms, value); //此方法 会调用到以下方法. 实际上是同个方法，多层封装
-                    RuntimeTypeModel.Default.Serialize(ms, value);
+                  //  RuntimeTypeModel.Default.Serialize(ms, value);
                   
                 }
                 //设置当前 位置
