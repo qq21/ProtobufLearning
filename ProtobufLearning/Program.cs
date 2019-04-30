@@ -16,7 +16,14 @@ namespace ProtobufLearning
 
             // NetMode m1 = new NetMode(1, "a");
 
-            NetModeSub m1 = new NetModeSub(1,"2",3);
+            NetModeSub m1 = new NetModeSub(1,"2",3,new Vector3(1,2,3));
+         
+            m1.vector3 = new Vector3(1, 1, 1);
+
+            Console.WriteLine(m1.vector3);
+
+       
+             
             Console.WriteLine("发送数据，进行序列化");
             Console.WriteLine("序列化后:id：{0} name:{1}", m1.id, m1.name);
 
@@ -26,6 +33,150 @@ namespace ProtobufLearning
             NetMode m2= PbTools.PBDSerialize<NetMode>(data);
             Console.WriteLine("反序列化后:id：{0} name:{1}", m2.id, m2.name);
 
+            Console.WriteLine(m2.vector3);
+        }
+    }
+    
+    [ProtoContract]
+    public struct Transform
+    {
+        
+        public Vector3 Position;
+        public Vector4 Rotation;
+        public Vector3 Scale;
+
+        public Transform(Vector3 pos,Vector4 rot,Vector3 sca)
+        {
+            this.Position = pos;
+            this.Rotation = rot;
+            this.Scale = sca;
+        }
+    }
+    [System.Serializable]
+
+    [ProtoContract]
+    public struct Vector3
+    {
+        /// <summary>
+        /// 结构体中  需要序列化的数组 都需要 加上 ProtoMember 特性， 否则 序列化后再 反序列化数值 会 丢失，变成默认值; 
+        /// </summary>     
+        [ProtoMember(1)]
+        public  float x;
+        [ProtoMember(2)]
+        public float y; 
+        [ProtoMember(3)]
+        public float z;
+
+        public Vector3(float x, float y, float z)
+        {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("({0},{1},{2})", x, y, z);
+        }
+
+        public float this[int index]
+        {
+            get
+            {
+                switch (index)
+                {
+                    case 0:
+                        return this.x;
+                    case 1:
+                        return this.y;
+                    case 2:
+                        return this.z;
+                    default:
+                        throw new IndexOutOfRangeException("Invalid Vector3 index!");
+                }
+            }
+            set
+            {
+                switch (index)
+                {
+                    case 0:
+                        this.x = value;
+                        break;
+                    case 1:
+                        this.y = value;
+                        break;
+                    case 2:
+                        this.z = value;
+                        break;
+                    default:
+                        throw new IndexOutOfRangeException("Invalid Vector3 index!");
+                }
+            }
+        }
+    }
+
+   
+    [System.Serializable]
+    [ProtoContract]
+    public struct Vector4
+    {
+        [ProtoMember(1)]
+        public float x;
+        [ProtoMember(2)]
+        public float y;
+        [ProtoMember(3)]
+        public float z;
+        [ProtoMember(4)]
+        public float w;
+        public Vector4(float x, float y, float z,float w)
+        {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            this.w = w;
+        }
+        public override string ToString()
+        {
+            return string.Format("({0},{1},{2},{3})", x, y, z,w);
+        }
+        public float this[int index]
+        {
+            get
+            {
+                switch (index)
+                {
+                    case 0:
+                        return this.x;
+                    case 1:
+                        return this.y;
+                    case 2:
+                        return this.z;
+                    case 3:
+                        return this.w;
+                    default:
+                        throw new IndexOutOfRangeException("Invalid Vector4 index!");
+                }
+            }
+            set
+            {
+                switch (index)
+                {
+                    case 0:
+                        this.x = value;
+                        break;
+                    case 1:
+                        this.y = value;
+                        break;
+                    case 2:
+                        this.z = value;
+                        break;
+                    case 3:
+                        this.w = value;
+                        break;
+                    default:
+                        throw new IndexOutOfRangeException("Invalid Vector4 index!");
+                }
+            }
         }
     }
 
@@ -36,30 +187,32 @@ namespace ProtobufLearning
     [ProtoContract]
     class NetMode
     {
-
+       
         [ProtoMember(1)]
         public int id;
         [ProtoMember(2)]
         public string name;
 
+        [ProtoMember(4)]
+        public Vector3 vector3=new Vector3(5,7,8);
          
+
+
         public NetMode()
         {
         }
          
-        public NetMode(int id,string name)
+        public NetMode(int id,string name,Vector3 v3)
         {
             this.id = id;
             this.name = name;
+            this.vector3 = v3;
         }
     }
 
      [ProtoContract]
     class NetModeSub:NetMode
     {
-  
-      
-
         [ProtoMember(2)] public float range;
         /// <summary>
         ///   子类的构造函数也一定要有，不然也会报错
@@ -75,7 +228,7 @@ namespace ProtobufLearning
             this.range = range;
         }
 
-        public NetModeSub(int id, string name, float range) : base(id, name)
+        public NetModeSub(int id, string name, float range,Vector3 v3) : base(id, name,v3)
         {
             this.range = range;
         }
