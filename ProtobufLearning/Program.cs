@@ -18,9 +18,10 @@ namespace ProtobufLearning
 
             NetModeSub m1 = new NetModeSub(1,"2",3,new Vector3(1,2,3));
          
-            m1.vector3 = new Vector3(1, 1, 1);
-
-            Console.WriteLine(m1.vector3);
+            m1.vector3 = new Vector3(1, 2, 1);
+              Transform transform= new Transform(new Vector3(1, 12.1231565232131231246f, 1), new Vector4(0, 0, 0, 1), new Vector3(1, 1, 1));
+              m1.transform = transform;
+            Console.WriteLine(m1.transform);
 
        
              
@@ -32,7 +33,7 @@ namespace ProtobufLearning
             Console.WriteLine("----客服端收到数据-----开始反序列化");
             NetMode m2= PbTools.PBDSerialize<NetMode>(data);
             Console.WriteLine("反序列化后:id：{0} name:{1}", m2.id, m2.name);
-
+            Console.WriteLine(m2.transform);
             Console.WriteLine(m2.vector3);
         }
     }
@@ -40,9 +41,11 @@ namespace ProtobufLearning
     [ProtoContract]
     public struct Transform
     {
-        
+        [ProtoMember(1)]
         public Vector3 Position;
+        [ProtoMember(2)]
         public Vector4 Rotation;
+        [ProtoMember(3)]
         public Vector3 Scale;
 
         public Transform(Vector3 pos,Vector4 rot,Vector3 sca)
@@ -51,9 +54,13 @@ namespace ProtobufLearning
             this.Rotation = rot;
             this.Scale = sca;
         }
-    }
-    [System.Serializable]
 
+        public override string ToString()
+        {
+            return string.Format("Position:{0},Rotation:{1},Scale:{2}", Position, Rotation, Scale);
+        }
+    }
+ 
     [ProtoContract]
     public struct Vector3
     {
@@ -115,8 +122,6 @@ namespace ProtobufLearning
         }
     }
 
-   
-    [System.Serializable]
     [ProtoContract]
     public struct Vector4
     {
@@ -128,6 +133,8 @@ namespace ProtobufLearning
         public float z;
         [ProtoMember(4)]
         public float w;
+        
+
         public Vector4(float x, float y, float z,float w)
         {
             this.x = x;
@@ -195,8 +202,8 @@ namespace ProtobufLearning
 
         [ProtoMember(4)]
         public Vector3 vector3=new Vector3(5,7,8);
-         
 
+        [ProtoMember(5)] public Transform transform ;
 
         public NetMode()
         {
@@ -208,6 +215,7 @@ namespace ProtobufLearning
             this.name = name;
             this.vector3 = v3;
         }
+
     }
 
      [ProtoContract]
