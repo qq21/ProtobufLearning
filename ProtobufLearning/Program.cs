@@ -19,7 +19,7 @@ namespace ProtobufLearning
             NetModeSub m1 = new NetModeSub(1,"2",3,new Vector3(1,2,3));
          
             m1.vector3 = new Vector3(1, 2, 1);
-              Transform transform= new Transform(new Vector3(1, 12.1231565232131231246f, 1), new Vector4(0, 0, 0, 1), new Vector3(1, 1, 1));
+              Transform transform= new Transform(new Vector3(1, 12.1231565232131231246f, 1), new Vector4(0, 0, 0, 1), new Vector3(1, 1, 1),new NetMode(){id=1111});
               m1.transform = transform;
             Console.WriteLine(m1.transform);
 
@@ -47,17 +47,21 @@ namespace ProtobufLearning
         public Vector4 Rotation;
         [ProtoMember(3)]
         public Vector3 Scale;
+        [ProtoMember(5)]
+        public NetMode netMode;
 
-        public Transform(Vector3 pos,Vector4 rot,Vector3 sca)
+        public Transform(Vector3 pos,Vector4 rot,Vector3 sca,NetMode netMode)
         {
             this.Position = pos;
             this.Rotation = rot;
             this.Scale = sca;
+            this.netMode = netMode;
+
         }
 
         public override string ToString()
         {
-            return string.Format("Position:{0},Rotation:{1},Scale:{2}", Position, Rotation, Scale);
+            return string.Format("Position:{0},Rotation:{1},Scale:{2},id:{3}", Position, Rotation, Scale,netMode.id);
         }
     }
  
@@ -192,7 +196,7 @@ namespace ProtobufLearning
     /// </summary>
     [ProtoInclude(3,typeof(NetModeSub))]
     [ProtoContract]
-    class NetMode
+    public class NetMode
     {
        
         [ProtoMember(1)]
