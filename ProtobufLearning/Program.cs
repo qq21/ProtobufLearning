@@ -13,28 +13,48 @@ namespace ProtobufLearning
     {
         static void Main(string[] args)
         {
+            #region Test1
+            //   
+            //    // NetMode m1 = new NetMode(1, "a");
 
-            // NetMode m1 = new NetMode(1, "a");
+            //    NetModeSub m1 = new NetModeSub(1,"2",3,new Vector3(1,9,9));
 
-            NetModeSub m1 = new NetModeSub(1,"2",3,new Vector3(1,2,3));
-         
-            m1.vector3 = new Vector3(1, 2, 1);
-              Transform transform= new Transform(new Vector3(1, 12.1231565232131231246f, 1), new Vector4(0, 0, 0, 1), new Vector3(1, 1, 1),new NetMode(){id=1111});
-              m1.transform = transform;
-            Console.WriteLine(m1.transform);
 
-       
-             
-            Console.WriteLine("发送数据，进行序列化");
-            Console.WriteLine("序列化后:id：{0} name:{1}", m1.id, m1.name);
+            //    m1.vector3 -= new Vector3(1, 9, 9);
 
-            //模拟发送数据
-            byte[] data= PbTools.Serialize(m1);
-            Console.WriteLine("----客服端收到数据-----开始反序列化");
-            NetMode m2= PbTools.PBDSerialize<NetMode>(data);
-            Console.WriteLine("反序列化后:id：{0} name:{1}", m2.id, m2.name);
-            Console.WriteLine(m2.transform);
-            Console.WriteLine(m2.vector3);
+            //    Console.WriteLine("序列化前v3:" + m1.vector3);
+
+            //    Transform transform = new Transform(new Vector3(1, 12.1231565232131231246f, 1), new Vector4(0, 0, 0, 1), new Vector3(1, 1, 1), new NetMode() { id = 1111,type=IpType.IPV6 });
+            //    m1.transform = transform;
+            // //   Console.WriteLine(m1.transform);
+
+
+            //    //模拟发送数据
+            //    Console.WriteLine("发送数据，进行序列化");
+
+            //    Console.WriteLine("序列化后:id：{0} name:{1}", m1.id, m1.name);
+            //    //序列化
+            //    byte[] data= PbTools.Serialize(m1);
+
+            //    Console.WriteLine("----客服端收到数据-----开始反序列化");
+            //    NetMode m2= PbTools.PBDSerialize<NetMode>(data);
+            //  // Console.WriteLine("反序列化后:id：{0} name:{1}", m2.id, m2.name);
+            //  //  Console.WriteLine(m2.transform);
+            ////    Console.WriteLine(m2.transform.netMode.type);
+            //    Console.WriteLine(m2.vector3);
+            //    //   Console.WriteLine(m2.vector3[1]);
+            //    
+            #endregion
+
+            #region test2
+            Car tools = new XCar("blue", 10);
+            tools.Drive();
+
+            byte[] data= PbTools.Serialize(tools);
+            //反序列化子类的时候，反序列化的对象一定得是 原来的对象，不能是父类也不能是子类
+            PbTools.PBDSerialize<Car>(data).Drive();
+
+            #endregion
         }
     }
     
@@ -47,9 +67,11 @@ namespace ProtobufLearning
         public Vector4 Rotation;
         [ProtoMember(3)]
         public Vector3 Scale;
+
+        //Test:
         [ProtoMember(5)]
         public NetMode netMode;
-
+ 
         public Transform(Vector3 pos,Vector4 rot,Vector3 sca,NetMode netMode)
         {
             this.Position = pos;
@@ -64,7 +86,69 @@ namespace ProtobufLearning
             return string.Format("Position:{0},Rotation:{1},Scale:{2},id:{3}", Position, Rotation, Scale,netMode.id);
         }
     }
+  
+    [ProtoInclude(1,typeof(Car))]
+    [ProtoContract]
+    interface Vehicle
+    {
+        void Drive();
+        string name { get; }
+        float speed { get; }
+
+    }
+    [ProtoInclude(1, typeof(XCar))]
+    [ProtoContract]
+    public class Car:Vehicle 
+    {
+        [ProtoMember(2)]
+        public string _name;
+         
+        [ProtoMember(3)]
+        public float _speed;
+
  
+
+        /// <summary>Initializes a new instance of the <see cref="T:System.Object" /> class.</summary>
+        public Car(string name, float speed)
+        {
+            _name = name;
+            _speed = speed;
+        }
+
+        /// <summary>Initializes a new instance of the <see cref="T:System.Object" /> class.</summary>
+        public Car()
+        {
+        }
+
+        #region Implementation of Vehicle
+
+        public virtual void Drive()
+        {
+            Console.WriteLine("{0}的速度是{1}", _name, _speed);
+        }
+
+        public string name => _name;
+
+        public float speed => _speed;
+
+        #endregion
+    }
+
+    [ProtoContract]
+    public class XCar : Car
+    {
+        public XCar()
+        {
+        }
+        
+        public XCar(string name, float speed) 
+        {
+            this._name = name;
+            this._speed = speed;
+        }
+     
+    }
+
     [ProtoContract]
     public struct Vector3
     {
@@ -83,6 +167,12 @@ namespace ProtobufLearning
             this.x = x;
             this.y = y;
             this.z = z;
+        }
+
+         
+        public bool IsZero()
+        {
+            return x ==0&& y==0 && z==0;
         }
 
         public override string ToString()
@@ -124,6 +214,21 @@ namespace ProtobufLearning
                 }
             }
         }
+
+        //public static Vector3 operator -(Vector3 a, Vector3 b)
+        //{
+        //    return new Vector3(a.x - b.x, a.y - b.y, a.z - b.z);
+        //}
+        public static Vector3 operator +(Vector3 a, Vector3 b)
+        {
+            return new Vector3(a.x + b.x, a.y + b.y, a.z + b.z);
+        }
+        public static Vector3 operator -(Vector3 a, Vector3 b)
+        {
+            return new Vector3(a.x - b.x, a.y - b.y, a.z - b.z);
+        }
+
+
     }
 
     [ProtoContract]
@@ -204,10 +309,14 @@ namespace ProtobufLearning
         [ProtoMember(2)]
         public string name;
 
-        [ProtoMember(4)]
-        public Vector3 vector3=new Vector3(5,7,8);
+
+        [ProtoMember(4)] public Vector3 vector3;  //坑1 当互相减 为0的时候， 0就 代表，反序列化后 是默认值
 
         [ProtoMember(5)] public Transform transform ;
+
+
+        [ProtoMember(6)]
+        public IpType type;
 
         public NetMode()
         {
@@ -222,7 +331,16 @@ namespace ProtobufLearning
 
     }
 
-     [ProtoContract]
+   
+    public enum IpType
+    {
+        [ProtoEnum]
+        IPV4 =101,
+        [ProtoEnum]
+        IPV6 =102
+    }
+
+    [ProtoContract]
     class NetModeSub:NetMode
     {
         [ProtoMember(2)] public float range;
